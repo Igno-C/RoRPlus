@@ -1,24 +1,13 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+The application can receive GraphQL requests to store stock quotes (consisting of a ticker, timestamp and price) in a database.
 
-Things you may want to cover:
+When receiving a new request, a new quote related to the given ticker is created. If the given ticker doesn't exist yet in the database, it gets created. If the request would create a quote with a timestamp and ticker pair that already exists, it modifies that quote instead.
 
-* Ruby version
+The GraphQL API is automatically documented by GraphiQL
 
-* System dependencies
+---
 
-* Configuration
+The database schema is as follows:
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+![The db schema](https://github.com/Igno-C/RoRTask/blob/master/gram.png?raw=true)
