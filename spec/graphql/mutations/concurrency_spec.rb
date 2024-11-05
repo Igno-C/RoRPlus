@@ -11,22 +11,26 @@ module Mutations
               
       it "Handles concurrent GraphQL requests to create quotes" do
         expect do
-          tickers.map do |ticker|
-            Thread.new do
-              post "/graphql", params: {query: query(ticker, timestamp, price)}
-            end
-          end.each(&:join)
-        end.to change {Quote.count}.by(tickers.length)
+          expect do
+            tickers.map do |ticker|
+              Thread.new do
+                post "/graphql", params: {query: query(ticker, timestamp, price)}
+              end
+            end.each(&:join)
+          end.to change {Quote.count}.by(tickers.length)
+        end.to change {Ticker.count}.by(tickers.length)
       end
 
       it "Handles concurrent GraphQL requests to modify quotes" do
         expect do
-          5.times.map do |i|
-            Thread.new do
-              post "/graphql", params: {query: query("ABC", timestamp, price)}
-            end
-          end.each(&:join)
-        end.to change {Quote.count}.by(1)
+          expect do
+            5.times.map do |i|
+              Thread.new do
+                post "/graphql", params: {query: query("ABC", timestamp, price)}
+              end
+            end.each(&:join)
+          end.to change {Quote.count}.by(1)
+        end.to change {Ticker.count}.by(1)
       end
     end
 
