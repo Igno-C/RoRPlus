@@ -10,4 +10,4 @@ The GraphQL API is automatically documented by GraphiQL
 
 The database schema is as follows:
 
-![The db schema](https://github.com/Igno-C/RoRTask/blob/master/gram.png?raw=true)
+![The db schema](https://github.com/Igno-C/RoRPlus/blob/master/gram.png?raw=true)
