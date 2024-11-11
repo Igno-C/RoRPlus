@@ -59,4 +59,4 @@ end
 gem "graphql", "~> 2.4"
 gem "graphiql-rails", group: :development
 
-gem 'rspec-rails', '~> 7.0.0'
+gem 'rspec-rails', '~> 7.1.0'
