@@ -337,6 +337,7 @@ DEPENDENCIES
   graphql (~> 2.4)
   importmap-rails
   jbuilder
+  parallel
   puma (>= 5.0)
   rails (~> 7.2.1, >= 7.2.1.1)
   rspec-rails (~> 7.0.0)
