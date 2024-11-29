@@ -7,16 +7,14 @@ module Mutations
     describe ".resolve" do
       
       tickers = ["ABC", "ABC", "ABc", "ga", "ge", "AbC"]
-      timestamp = "2024-10-26T22:00:00Z"
-      timestampt = "2024-10-26T22:00:0"
-      price = 110
-              
+
       it "Handles concurrent GraphQL requests to create and modify quotes" do
         expect do
           expect do
-            Parallel.map(tickers.each_with_index.to_a, in_threads: 6) do |(ticker, index)|
+            ActiveRecord::Base.connection_pool.disconnect!
+            Parallel.map(tickers.each_with_index.to_a, in_processes: 6) do |(ticker, index)|
               ActiveRecord::Base.connection_pool.with_connection do
-                post "/graphql", params: {query: query(ticker, timestampt + index.to_s + 'Z', price)}
+                post "/graphql", params: {query: query(ticker, "2024-10-26T22:00:0" + index.to_s + "Z", 100 + index)}
               end
             end
           end.to change {Quote.count}.by(6)
@@ -26,9 +24,10 @@ module Mutations
       it "Handles concurrent GraphQL requests to modify quotes" do
         expect do
           expect do
-            Parallel.map(6.times.map.to_a, in_threads: 6) do |index|
+            ActiveRecord::Base.connection_pool.disconnect!
+            Parallel.map(6.times.map.to_a, in_processes: 6) do |index|
               ActiveRecord::Base.connection_pool.with_connection do
-                post "/graphql", params: {query: query("ABC", timestamp, price+index)}
+                post "/graphql", params: {query: query("ABC", "2024-10-26T22:00:00Z", 100+index)}
               end
             end
           end.to change {Quote.count}.by(1)

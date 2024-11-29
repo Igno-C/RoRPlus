@@ -22,6 +22,7 @@ class Mutations::CreateQuote < Mutations::BaseMutation
         end
       end
       {quote: quote, errors: []}
+    # Possible concurrency conflict, will be fixed on retry
     rescue ActiveRecord::RecordNotUnique
       retry
     rescue => e
