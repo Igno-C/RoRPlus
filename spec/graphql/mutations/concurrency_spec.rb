@@ -1,34 +1,35 @@
 require "rails_helper"
-require "concurrent"
+require "parallel"
+require "rake"
 
 module Mutations
   RSpec.describe CreateQuote, type: :request do
     describe ".resolve" do
       
-      tickers = ["TeSt", "ABC", "rra", "ga", "ge"]
-      timestamp = "2024-10-26T22:00:00Z"
-      price = 110
-              
-      it "Handles concurrent GraphQL requests to create quotes" do
+      tickers = ["ABC", "ABC", "ABc", "ga", "ge", "AbC"]
+
+      it "Handles concurrent GraphQL requests to create and modify quotes" do
         expect do
           expect do
-            tickers.map do |ticker|
-              Thread.new do
-                post "/graphql", params: {query: query(ticker, timestamp, price)}
+            ActiveRecord::Base.connection_pool.disconnect!
+            Parallel.map(tickers.each_with_index.to_a, in_processes: 6) do |(ticker, index)|
+              ActiveRecord::Base.connection_pool.with_connection do
+                post "/graphql", params: {query: query(ticker, "2024-10-26T22:00:0" + index.to_s + "Z", 100 + index)}
               end
-            end.each(&:join)
-          end.to change {Quote.count}.by(tickers.length)
-        end.to change {Ticker.count}.by(tickers.length)
+            end
+          end.to change {Quote.count}.by(6)
+        end.to change {Ticker.count}.by(3)
       end
 
       it "Handles concurrent GraphQL requests to modify quotes" do
         expect do
           expect do
-            5.times.map do |i|
-              Thread.new do
-                post "/graphql", params: {query: query("ABC", timestamp, price)}
+            ActiveRecord::Base.connection_pool.disconnect!
+            Parallel.map(6.times.map.to_a, in_processes: 6) do |index|
+              ActiveRecord::Base.connection_pool.with_connection do
+                post "/graphql", params: {query: query("ABC", "2024-10-26T22:00:00Z", 100+index)}
               end
-            end.each(&:join)
+            end
           end.to change {Quote.count}.by(1)
         end.to change {Ticker.count}.by(1)
       end
