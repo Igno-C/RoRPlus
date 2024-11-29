@@ -10,37 +10,45 @@ module Mutations
 
       it "Rejects non-alphabet tickers" do
         expect do
-          post "/graphql", params: {query: query("te1", timestamp, price)}
-          resp = response.body
-          json = JSON.parse(resp)
-          expect(json["data"]["createQuote"]["errors"].length).to be > 0
-        end.to change {Quote.count}.by(0)
+          expect do
+            post "/graphql", params: {query: query("te1", timestamp, price)}
+            resp = response.body
+            json = JSON.parse(resp)
+            expect(json["data"]["createQuote"]["errors"].length).to be > 0
+          end.to change {Quote.count}.by(0)
+        end.to change {Ticker.count}.by(0)
       end
 
       it "Rejects negative prices" do
         expect do
-          post "/graphql", params: {query: query(ticker, timestamp, -23)}
-          resp = response.body
-          json = JSON.parse(resp)
-          expect(json["data"]["createQuote"]["errors"].length).to be > 0
-        end.to change {Quote.count}.by(0)
+          expect do
+            post "/graphql", params: {query: query(ticker, timestamp, -23)}
+            resp = response.body
+            json = JSON.parse(resp)
+            expect(json["data"]["createQuote"]["errors"].length).to be > 0
+          end.to change {Quote.count}.by(0)
+        end.to change {Ticker.count}.by(0)
       end
 
       it "Rejects empty ticker" do
         expect do
-          post "/graphql", params: {query: query("", timestamp, price)}
-          resp = response.body
-          json = JSON.parse(resp)
-          expect(json["data"]["createQuote"]["errors"].length).to be > 0
-        end.to change {Quote.count}.by(0)
+          expect do
+            post "/graphql", params: {query: query("", timestamp, price)}
+            resp = response.body
+            json = JSON.parse(resp)
+            expect(json["data"]["createQuote"]["errors"].length).to be > 0
+          end.to change {Quote.count}.by(0)
+        end.to change {Ticker.count}.by(0)
       end
       it "Rejects long ticker" do
         expect do
-          post "/graphql", params: {query: query("AAAAA", timestamp, price)}
-          resp = response.body
-          json = JSON.parse(resp)
-          expect(json["data"]["createQuote"]["errors"].length).to be > 0
-        end.to change {Quote.count}.by(0)
+          expect do
+            post "/graphql", params: {query: query("AAAAA", timestamp, price)}
+            resp = response.body
+            json = JSON.parse(resp)
+            expect(json["data"]["createQuote"]["errors"].length).to be > 0
+          end.to change {Quote.count}.by(0)
+        end.to change {Ticker.count}.by(0)
       end
     end
 

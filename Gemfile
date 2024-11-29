@@ -54,9 +54,12 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+  gem 'database_cleaner-active_record'
 end
 
 gem "graphql", "~> 2.4"
 gem "graphiql-rails", group: :development
 
 gem 'rspec-rails', '~> 7.0.0'
+
+gem 'parallel'
